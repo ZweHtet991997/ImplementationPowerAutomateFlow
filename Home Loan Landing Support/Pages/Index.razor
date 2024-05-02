@@ -1,0 +1,26 @@
+﻿@page "/index"
+@using MudBlazor
+
+<PageTitle>Index</PageTitle>
+
+<MudButton Variant="Variant.Filled">Default</MudButton>
+<MudButton Variant="Variant.Filled" Color="Color.Primary">Primary</MudButton>
+<MudButton Variant="Variant.Filled" Color="Color.Secondary">Secondary</MudButton>
+<MudButton Variant="Variant.Filled" Disabled="true">Disabled</MudButton>
+
+@inject IDialogService DialogService
+
+
+<MudButton @onclick="OpenDialog" Variant="Variant.Filled" Color="Color.Primary">
+    Open Dialog
+</MudButton>
+
+@code {
+
+    private void OpenDialog()
+    {
+        var options = new DialogOptions { CloseOnEscapeKey = true };
+        DialogService.Show<Dialog>("LS Form Submitted", options);
+    }
+}
+

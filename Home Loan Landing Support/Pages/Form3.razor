@@ -1,0 +1,42 @@
+﻿@page "/form3"
+<h4>Home Loan Form 3 Details</h4>
+<form>
+    <div class="form-group">
+        <label for="saelcallid">Sale Call ID *</label><br />
+        <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="" @bind="SaleCallID" readonly="readonly">
+        <br />
+    </div>
+    <div class="form-group">
+        <label for="saelcallid">Loan Type *</label><br />
+        <select class="form-control" id="exampleFormControlSelect1" readonly="readonly">
+            <option value="">Normal Loan</option>
+            <option value="" selected>Project Loan</option>
+        </select>
+        <br />
+    </div>
+    <div class="form-group">
+        <label for="saelcallid">Branch Type *</label><br />
+        <select class="form-control" id="exampleFormControlSelect1" readonly="readonly">
+            <option value="" selected>Normal</option>
+        </select>
+        <br />
+    </div>
+    <div class="form-group">
+        <label for="saelcallid">Stage for DOA *</label><br />
+        <select class="form-control" id="exampleFormControlSelect1" readonly="readonly">
+            <option value="" selected>Case Submitting</option>
+        </select>
+        <br />
+    </div>
+    <div class="form-group">
+        <label for="saelcallid">Share Folder Name Township *</label><br />
+        <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="" value="//" readonly="readonly">
+        <br />
+    </div>
+</form>
+@{
+    @code {
+        [Parameter]
+        public string SaleCallID { get; set; }
+    }
+}

@@ -1,0 +1,46 @@
+﻿@page "/form2"
+<h4>Home Loan Form 2 Details</h4>
+<form>
+    <div class="form-group">
+        <label for="saelcallid">Sale Call ID *</label><br />
+        <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="" @bind="SaleCallID" readonly="readonly">
+        <br />
+    </div>
+    <div class="form-group">
+        <label for="saelcallid">Application Progress *</label><br />
+        <select class="form-control" id="exampleFormControlSelect1" readonly="readonly">
+            <option value="">Document Collection</option>
+            <option value="" selected>Document Complete</option>
+        </select>
+        <br />
+    </div>
+    <div class="form-group">
+        <label for="saelcallid">Product Type *</label><br />
+        <select class="form-control" id="exampleFormControlSelect1" readonly="readonly">
+            <option value="">Document Collection</option>
+            <option value="" selected>Standard Housing Loan</option>
+            <option value="">Group Housing Loan</option>
+        </select>
+        <br />
+    </div>
+    <div class="form-group">
+        <label for="saelcallid">Interested Property *</label><br />
+        <select class="form-control" id="exampleFormControlSelect1" readonly="readonly">
+            <option value="">Apartment</option>
+            <option value="" selected>Condo</option>
+            <option value="">Group Housing Loan</option>
+        </select>
+        <br />
+    </div>
+    <div class="form-group">
+        <label for="saelcallid">Property Township *</label><br />
+        <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="" value="Ahlone" readonly="readonly">
+        <br />
+    </div>
+</form>
+@{
+    @code {
+        [Parameter]
+        public string SaleCallID { get; set; }
+    }
+}

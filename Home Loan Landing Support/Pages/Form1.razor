@@ -1,0 +1,55 @@
+﻿@page "/form1/{CaseId}"
+<h4>Home Loan Form 1 Details</h4>
+<form>
+    <div class="form-group">
+        <label for="saelcallid">Sale Call ID *</label><br />
+        <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="" @bind="SaleCallID" readonly="readonly">
+        <br />
+    </div>
+    <div class="form-group">
+        <label for="saelcallid">Email *</label><br />
+        <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="" value="user@gmail.com" readonly="readonly">
+        <br />
+    </div>
+    <div class="form-group">
+        <label for="saelcallid">Submission Date *</label><br />
+        <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="" value="02/14/2023" readonly="readonly">
+        <br />
+    </div>
+    <div class="form-group">
+        <label for="saelcallid">Region Code *</label><br />
+        <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="" value="2" readonly="readonly">
+        <br />
+    </div>
+    <div class="form-group">
+        <label for="saelcallid">Branch Name *</label><br />
+        <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="" value="Thanlyin Star City" readonly="readonly">
+        <br />
+    </div>
+    <div class="form-group">
+        <label for="saelcallid">Customer Name *</label><br />
+        <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="" value="U Ye Myint" readonly="readonly">
+        <br />
+    </div>
+    <div class="form-group">
+        <label for="saelcallid">Business Name *</label><br />
+        <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="" value="Shwe Mhyar" readonly="readonly">
+        <br />
+    </div>
+    <div class="form-group">
+        <label for="stage">Business Type *</label><br />
+        <select class="form-control" id="exampleFormControlSelect1" readonly="readonly">
+            @*<option class="placeholder"></option>*@
+            <option value="" selected>၁. စီမံခန့်ခွဲမှုနှင့် ဝန်ဆောင်မှုလုပ်ငန်း</option>
+            <option value="Recommended Property Price and Complete (DOA)">၂. အထည်ချုပ်လုပ်ငန်း လက်ဝတ်ရတနာလုပ်ငန်း ဆောက်လုပ်ရေးလုပ်ငန်း သတ္တုလုပ်ငန်း ပလပ်စတစ်လုပ်ငန်းများ</option>
+            <option value="LS complete with Requirements">၃. ဆောက်လုပ်ရေးလုပ်ငန်း</option>
+            <option value="LS Update for Normal and Underwriting Branch">၄. ဘဏ္ဍာရေးနှင့်အာမခံ လုပ်ငန်းများ</option>
+            <option value="LS Return">၆. ခရီးသွားဝန်ဆောင်မူလုပ်ငန်း</option>
+            <option value="LS Remove">၇. သယ်ယူပို့ဆောင်ရေးနှင့် သိုလောင်ရုံဝန်ဆောင်မူလုပ်ငန်း</option>
+        </select>
+    </div><br />
+</form>
+@code {
+    [Parameter]
+    public string SaleCallID { get; set; }
+}

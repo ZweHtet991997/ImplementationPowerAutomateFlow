@@ -1,0 +1,25 @@
+﻿@using MudBlazor
+@inject NavigationManager navigationManager;
+
+<MudDialog DefaultFocus="DefaultFocus.LastChild">
+    <DialogContent>
+        You have successfully submitted
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">Cancel</MudButton>
+        <MudButton Color="Color.Success" OnClick="Submit">Ok</MudButton>
+        @*<MudButton Color="Color.Success">Focused Button</MudButton>*@
+    </DialogActions>
+</MudDialog>
+@code {
+
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+
+    void Submit()
+    {
+        MudDialog.Close(DialogResult.Ok(true));
+        navigationManager.NavigateTo("homeloan");
+    }
+    void Cancel() => MudDialog.Cancel();
+
+}

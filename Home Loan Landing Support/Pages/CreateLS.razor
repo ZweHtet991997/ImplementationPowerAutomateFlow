@@ -1,0 +1,275 @@
+﻿@page "/create/{CaseId}"
+@inject HomeLoanApiServices _apiServices;
+@using MudBlazor;
+@inject IDialogService DialogService;
+@inject NavigationManager navigationManager;
+@inject Home_Loan_Landing_Support.LSMakerChecker makercheckerService;
+@using Home_Loan_Landing_Support.Models;
+@using Home_Loan_Landing_Support.Models.LS;
+<h4>Home Loan LS Form</h4>
+@if (created == 1)
+{
+    @*<div class="alert alert-success alert-dismissible fade show" role="alert">
+        <strong>Well Done!</strong> You have successfully submitted.
+    </div>*@
+    OpenDialog();
+}
+else if (updated == 1)
+{
+    string loader = $"img/loading.gif";
+    <div class="centerloader">
+        <img src="@(loader)" />
+    </div>
+}
+
+else
+{
+    <div class="card">
+        <div class="card-header">
+            <span style="font-size:15px;color:orangered">Home Loan / LS Assign HL Form</span><br />
+        </div>
+        <div class="card-body">
+            <MudTabs Elevation="1" Rounded="true" PanelClass="pa-6">
+                <MudTabPanel Text="Home Loan Form 1" ToolTip="Form One">
+                    <MudText><Form1 SaleCallID="@CaseId"></Form1></MudText>
+                </MudTabPanel>
+                <MudTabPanel Text="Home Loan Form 2" ToolTip="Form Two">
+                    <MudText><Form2 SaleCallID="@CaseId"></Form2></MudText>
+                </MudTabPanel>
+                <MudTabPanel Text="Home Loan Form 3" ToolTip="Form Three">
+                    <MudText><Form3 SaleCallID="@CaseId"></Form3></MudText>
+                </MudTabPanel>
+                <MudTabPanel Text="LS Assign HL Form" ToolTip="LS Assign HL">
+                    <MudText>
+                        <form>
+                            <div class="form-group">
+                                <label for="saelcallid">Sale Call ID *</label><br />
+                                <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="" @bind=CaseId readonly="readonly">
+                                <br />
+                            </div>
+                            <div class="form-group">
+                                <label for="stage">Stage *</label><br />
+                                @{
+                                    if (lstLS.Count > 0)
+                                    {
+                                        <select class="form-control" id="exampleFormControlSelect1" @bind=@Stage>
+                                            <option class="placeholder" selected></option>
+                                            <option value="Analyst Assign">Analyst Assign</option>
+                                            <option value="Recommended Property Price and Complete (DOA)">Recommended Property Price and Complete(DOA)</option>
+                                            <option value="LS complete with Requirements">LS Complete with Requirements</option>
+                                        </select>
+                                    }
+                                    else
+                                    {
+                                        <select class="form-control" id="exampleFormControlSelect1" @bind=@Stage>
+                                            <option class="placeholder" selected></option>
+                                            <option value="Analyst Assign">Analyst Assign</option>
+                                        </select>
+                                    }
+                                }
+
+                            </div><br />
+                            @if (Stage == "Analyst Assign")
+                            {
+                                <div class="form-group">
+                                    <label for="saelcallid">Approval Level *</label><br />
+                                    <select class="form-control" id="exampleFormControlSelect1" @bind=model.ApprovalLevel>
+                                        <option class="placeholder" selected></option>
+                                        <option>Branch Manager</option>
+                                        <option>Regional Manager</option>
+                                        <option>Head Offic</option>
+                                    </select>
+                                </div>
+
+                                <br />
+                                <div class="form-group">
+                                    <label for="saelcallid">Assign Analyst Name *</label><br />
+                                    <select class="form-control" @onchange="(e)=>GetEmailByAssignPersonName(e,selectedAssignedPerson)">
+                                        <option class="placeholder" selected>@selectedAssignedPerson</option>
+                                        @foreach (var assignperson in lstAssignPerson)
+                                        {
+                                            <option value="@assignperson.Name">@assignperson.Name</option>
+                                        }
+                                    </select>
+                                </div>
+
+                                <br />
+                                <div class="form-group">
+                                    <label for="saelcallid">Assign Analyst Email *</label><br />
+                                    <input type="text" class="form-control" id="exampleInputEmail1" @bind=@assignPersonEmail>
+                                </div>
+                                <br />
+                            }
+                            @{
+                                switch (Stage.ToString())
+                                {
+                                    case "Recommended Property Price and Complete (DOA)":
+                                        <div class="form-group">
+                                            <label for="exampleFormControlTextarea1">Assessor Price per sq-ft MMK *</label>
+                                            <textarea class="form-control" id="exampleFormControlTextarea1" rows="3" @bind=model.Assessor_Price></textarea>
+                                        </div>
+                                        <br />
+                                        <div class="form-group">
+                                            <label for="saelcallid">Assessor Total Assessed Value MMK *</label><br />
+                                            <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="" @bind=model.Assessor_Total_Assessed_Value>
+                                            <br />
+                                        </div>
+                                        <br />
+                                        break;
+
+                                    case "LS complete with Requirements":
+                                        <div class="form-group">
+                                            <label for="exampleFormControlTextarea1">LS Complete with Requirements *</label>
+                                            <textarea class="form-control" id="exampleFormControlTextarea1" rows="3" @bind=model.LS_Complete></textarea>
+                                        </div>
+                                        <br />
+                                        break;
+
+                                    default:
+                                        break;
+                                }
+                            }
+                            <button type="button" class="btn btn-outline-info" @onclick=Back>Back</button>
+                            <div class="form-group" style="float:right">
+
+                                @{
+                                    if (lstLS.Count > 0)
+                                    {
+                                        <MudButton Disabled="@_processing" OnClick="Edit" Variant="Variant.Filled" Color="Color.Success">
+                                            @if (_processing)
+                                            {
+                                                <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true" />
+                                                <MudText Class="ms-2">Loading</MudText>
+                                            }
+                                            else
+                                            {
+                                                <MudText>Edit</MudText>
+                                            }
+                                        </MudButton>
+                                        //<button type="button" class="btn btn-primary" @onclick=Edit>Edit</button>
+                                    }
+                                    else
+                                    {
+                                        <MudButton Disabled="@_processing" OnClick="Create" Variant="Variant.Filled" Color="Color.Success">
+                                            @if (_processing)
+                                            {
+                                                <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true" />
+                                                <MudText Class="ms-2">Loading</MudText>
+                                            }
+                                            else
+                                            {
+                                                <MudText>Submit</MudText>
+                                            }
+                                        </MudButton>
+                                        //<button type="button" class="btn btn-primary" @onclick=Create>Submit</button>
+                                    }
+                                }
+                                <button type="button" class="btn btn-secondary ml-3" @onclick=@Back>Cancel</button>
+                            </div>
+                        </form>
+                    </MudText>
+                </MudTabPanel>
+            </MudTabs>
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter]
+    public string CaseId { get; set; }
+    public int updated = 0;
+    public LSResponseModel bindLSData = new LSResponseModel();
+    private int created = 0;
+    private LSRequestModel model = new LSRequestModel();
+    private string selectedAssignedPerson { get; set; }
+    private string Stage = string.Empty;
+    private string assignPersonEmail = string.Empty;
+    private List<LSAnalystAssignPersonList> lstAssignPerson { get; set; }
+
+    private List<LSResponseModel> lstLS = new List<LSResponseModel>();
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        lstAssignPerson = makercheckerService.AssignPersonList();
+        lstLS = await _apiServices.GetLSByCaseID(CaseId);
+
+        if (lstLS.Count > 0)
+        {
+            bindLSData = lstLS.FirstOrDefault();
+            model.CaseID = bindLSData.CaseID;
+            Stage = bindLSData.Stage;
+            model.ApprovalLevel = bindLSData.ApprovalLevel;
+            selectedAssignedPerson = bindLSData.Assign_Analyst_Name;
+            assignPersonEmail = bindLSData.Assign_Analyst_Email;
+            model.Assessor_Price = bindLSData.Assessor_Price;
+            model.Assessor_Total_Assessed_Value = bindLSData.Assessor_Total_Assessed_Value;
+            model.LS_Complete = bindLSData.LS_Complete;
+        }
+    }
+
+    protected string GetEmailByAssignPersonName(ChangeEventArgs e, string Name)
+    {
+        selectedAssignedPerson = e.Value.ToString();
+        assignPersonEmail = makercheckerService.GetEmailByName(selectedAssignedPerson);
+        return assignPersonEmail;
+    }
+    protected async Task<int> Create()
+    {
+        model.CaseID = CaseId;
+        model.Stage = Stage;
+        model.Assign_Analyst_Name = selectedAssignedPerson;
+        model.Assign_Analyst_Email = assignPersonEmail;
+
+        #region ButtonLoading
+        _processing = true;
+        await Task.Delay(2000);
+        _processing = false;
+        #endregion
+
+        created = await _apiServices.CreateLS(model);
+        return created > 0 ? 1 : 0;
+    }
+
+    protected async Task<int> Edit()
+    {
+        LSUpdateRequestModel reqModel = new LSUpdateRequestModel();
+        reqModel.ID = bindLSData.ID;
+        reqModel.CaseID = bindLSData.CaseID;
+        reqModel.Stage = Stage;
+        reqModel.Assign_Analyst_Name = selectedAssignedPerson;
+        reqModel.Assign_Analyst_Email = assignPersonEmail;
+        reqModel.Assessor_Price = model.Assessor_Price;
+        reqModel.Assessor_Total_Assessed_Value = model.Assessor_Total_Assessed_Value;
+        reqModel.LS_Complete = model.LS_Complete;
+        updated = 1;
+        created = await _apiServices.UpdateLS(reqModel);
+        if (created > 0)
+        {
+            updated = 0;
+            return 1;
+        }
+        return 0;
+    }
+
+    protected void Back()
+    {
+        created = 0;
+        navigationManager.NavigateTo("homeloan");
+    }
+    private void OpenDialog()
+    {
+        var options = new DialogOptions { CloseOnEscapeKey = true };
+        DialogService.Show<Dialog>("Success", options);
+        //Back();
+    }
+
+    private bool _processing = false;
+
+    //async Task ProcessSomething()
+    //{
+    //    _processing = true;
+    //    await Task.Delay(2000);
+    //    _processing = false;
+    //}
+}

@@ -1,0 +1,153 @@
+﻿@page "/homeloan"
+@inject IJSRuntime JS
+@implements IDisposable
+@inject HomeLoanApiServices service;
+@inject NavigationManager navigationManager;
+@using Home_Loan_Landing_Support.Models;
+
+
+<h6>Home Loan / LS Assign HL</h6>
+@{
+    string loader = $"img/loading.gif";
+    if (dataResult.Count == 0)
+    {
+        <div class="centerloader">
+            <img src="@(loader)" />
+        </div>
+    }
+    else
+    {
+        <div class="row">
+            <div class="col-md-4">
+                <select class="form-select" aria-label="Default select example" @onchange=SearchByStage>
+                    <option value="All" selected>All</option>
+                    <option value=@string.Empty>New</option>
+                    <option value="Analyst Assign">Analyst Assign</option>
+                    <option value="Recommended Property Price and Complete (DOA)">Recommended Property Price and Complete (DOA)</option>
+                    <option value="LS complete with Requirements">LS complete with Requirements</option>
+                </select>
+            </div>
+        </div>
+        <br />
+        <br />
+
+        <table class="table" id="table_id">
+            <thead>
+                <tr>
+                    <th>Case ID</th>
+                    <th>Customer Name</th>
+                    <th>Submission Date</th>
+                    <th>Region</th>
+                    <th>Branch Name</th>
+                    <th>View Details</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in dataResult)
+                {
+                    <tr>
+                        <td>@item.ID</td>
+                        <td>@item.CustomerName</td>
+                        <td>@item.SubmissionDate</td>
+                        <td>@item.Region</td>
+                        <td>@item.BranchName</td>
+                        <td>
+                            <a class="btn btn-info btn-sm" style="font-size:13px" href="/create/@item.ID">Details</a>
+                        </td>
+                        <td>
+                            @{
+                                switch (item.Status)
+                                {
+                                    case null:
+                                        <button class="btn btn-success btnstatus btn-new">New</button>
+                                        break;
+                                    case "Analyst Assign":
+                                        <button class="btn btn-success btn btnstatus btn-assign">Assigned</button>
+                                        break;
+                                    case "Recommended Property Price and Complete (DOA)":
+                                        <button class="btn btn-success btn btnstatus btn-recommend">Recommend</button>
+                                        break;
+                                    case "LS complete with Requirements":
+                                        <button class="btn btn-success btn btnstatus btn-complete">Completed</button>
+                                        break;
+                                    case "LS Update for Normal and Underwriting Branch":
+                                        <button class="btn btn-success btn btnstatus btn-update">Update</button>
+                                        break;
+                                    case "LS Return":
+                                        <button class="btn btn-success btn btnstatus btn-return">Return</button>
+                                        break;
+                                    case "Request Approval and Noti Issue":
+                                        <button class="btn btn-success btn btnstatus btn-request">Request</button>
+                                        break;
+                                    case "LS Remove":
+                                        <button class="btn btn-success btn btnstatus btn-remove">Remove</button>
+                                        break;
+                                    default:
+                                        break;
+                                }
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+}
+
+@code {
+    private readonly IJSRuntime _jSRuntime;
+    private string TableId = "table_id";
+    private List<Form1ResponseModel> dataResult = new List<Form1ResponseModel>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        dataResult = await service.GetForm1List();
+    }
+
+    public async Task SearchByStage(ChangeEventArgs e)
+    {
+        dataResult = await service.GetForm1List();
+        Dispose();
+        if (e.Value.ToString() == null || string.IsNullOrEmpty(e.Value.ToString()))
+        {
+            dataResult = dataResult.Where(x => x.Status == null).ToList();
+            StateHasChanged();
+        }
+        else if (e.Value.ToString() == "All")
+        {
+            dataResult = await service.GetForm1List();
+            StateHasChanged();
+        }
+        else
+        {
+            dataResult = dataResult.Where(x => x.Status == e.Value.ToString()).ToList();
+            StateHasChanged();
+        }
+    }
+
+    protected void Create()
+    {
+        navigationManager.NavigateTo("create");
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await JS.InvokeAsync<IJSObjectReference>("DataTablesAdd", "#table_id");
+    }
+
+    public void Dispose()
+    {
+        JS.InvokeAsync<IJSObjectReference>("DataTablesRemove", "#table_id");
+    }
+
+    //public async Task DataTable(string id, object options = null)
+    //{
+    //    await _jSRuntime.InvokeVoidAsync("jsFunctions.dataTable", "#" + id, options);
+    //}
+
+    //public async Task DataTableDestory(string id)
+    //{
+    //    await _jSRuntime.InvokeVoidAsync("jsFunctions.dataTableDestory", "#" + id);
+    //}
+}
